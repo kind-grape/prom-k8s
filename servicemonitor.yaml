@@ -2,20 +2,21 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   labels:
-    k8s-app: mysqld-exporter
-  name: mysqld-exporter
-  namespace: vaultdev-api
+    k8s-app: vault
+  name: vault-service-monitor
+  namespace: vaultdev-gcp
 spec:
   endpoints:
   - interval: 30s
     port: https
     scheme: https
     path: /v1/sys/metrics
-    # tlsConfig:
-    #   ca:
-    #     configMap:
-    #       name: serving-certs-ca-bundle
-    #       key: service-ca.crt
+    tlsConfig:
+      ca:
+        secret:
+          name: vault-ca
+          key: ca
+  jobLabel: vault-metrics
   selector:
     matchLabels:
-      app: mysqld-exporter
+      app: vault
