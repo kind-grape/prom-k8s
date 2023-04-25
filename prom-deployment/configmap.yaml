@@ -32,8 +32,12 @@ data:
     scrape_configs:
       - job_name: vault-metrics
         metrics_path: /v1/sys/metrics
+        authorization:
+          credentials: {{xxxx}}
         params:
           format: ['prometheus']
         scheme: https
+        tls_config:
+          insecure_skip_verify: true
         static_configs:
           - targets: ['vault.vaultdev-gcp.svc.cluster.local:8200']   
