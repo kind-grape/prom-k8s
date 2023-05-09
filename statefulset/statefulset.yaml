@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: monitoring-statefulset
+  namespace: vaultdev-gcp
+  labels:
+    app.kubernetes.io/name: monitoring-statefulset
+spec:
+  serviceName: monitoring-statefulset
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: monitoring-statefulset
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: monitoring-statefulset
+    spec:
+      containers:
+        - name: prometheus
+          image: registry.ford.com/gcprelease/prometheus:0.0.1
+          args:
+            - "--storage.tsdb.retention.time=12h"
+            - "--config.file=/etc/prometheus/prometheus.yml"
+            - "--storage.tsdb.path=/prometheus/"
+          ports:
+            - containerPort: 9090
+          resources:
+            requests:
+              cpu: 250m
+              memory: 500M
+            limits:
+              cpu: 300m
+              memory: 1Gi
+          volumeMounts:
+            - name: prometheus-config-volume
+              mountPath: /etc/prometheus/
+            - name: prom-vol
+              mountPath: /prometheus/
+        
+        - name: grafana
+          image: registry.ford.com/gcprelease/grafana:0.0.1
+          ports:
+          - name: grafana
+            containerPort: 3000
+          resources:
+            limits:
+              memory: 1Gi
+              cpu: 300m
+            requests: 
+              memory: 500M
+              cpu: 250m
+          volumeMounts:
+            - mountPath: /var/lib/grafana
+              name: grafana-vol
+            - mountPath: /etc/grafana/provisioning/datasources
+              name: grafana-datasources
+              readOnly: false
+            - mountPath: /etc/grafana/provisioning/dashboards
+              name: grafana-dashboard-conf
+              readOnly: false            
+            - mountPath: /var/lib/grafana/dashboards
+              name: grafana-vault-dashboard
+              readOnly: false
+
+
+      volumes:
+        - name: prometheus-config-volume
+          configMap:
+            defaultMode: 420
+            name: prometheus-server-conf
+        - name: grafana-datasources
+          configMap:
+              defaultMode: 420
+              name: grafana-datasources
+        - name: grafana-dashboard-conf
+          configMap:
+              defaultMode: 420
+              name: grafana-dashboard-conf
+        - name: grafana-vault-dashboard
+          configMap:
+              defaultMode: 420
+              name: grafana-vault-dashboard    
+        
+        
+
+  volumeClaimTemplates:
+    - metadata:
+        name: prom-vol
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 5Gi
+        storageClassName: gce-ssd-csi
+    - metadata:
+        name: grafana-vol
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+        storageClassName: gce-ssd-csi
