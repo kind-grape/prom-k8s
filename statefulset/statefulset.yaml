@@ -50,6 +50,14 @@ spec:
             requests: 
               memory: 500M
               cpu: 250m
+          env:
+            - name: GF_SERVER_PROTOCOL
+              value: https
+            - name: GF_SERVER_CERT_FILE
+              value: /etc/grafana/tls/cert.pem
+            - name: GF_SERVER_CERT_KEY
+              value: /etc/grafana/tls/key.pem
+
           volumeMounts:
             - mountPath: /var/lib/grafana
               name: grafana-vol
@@ -62,6 +70,10 @@ spec:
             - mountPath: /var/lib/grafana/dashboards
               name: grafana-vault-dashboard
               readOnly: false
+            - mountPath: /etc/grafana/tls
+              name: grafana-tls
+              readOnly: true
+
 
 
       volumes:
@@ -80,7 +92,11 @@ spec:
         - name: grafana-vault-dashboard
           configMap:
               defaultMode: 420
-              name: grafana-vault-dashboard    
+              name: grafana-vault-dashboard
+        - name: grafana-tls
+          secret:
+              defaultMode: 420
+              secretName: grafana-tls-test
         
         
 
