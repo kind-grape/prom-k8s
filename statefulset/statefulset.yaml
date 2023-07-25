@@ -57,6 +57,11 @@ spec:
               value: /etc/grafana/tls/cert.pem
             - name: GF_SERVER_CERT_KEY
               value: /etc/grafana/tls/key.pem
+            - name: GF_AUTH_LDAP_ENABLED
+              value: true
+            - name: GF_AUTH_LDAP_SKIP_ORG_ROLE_SYNC
+              value: true
+
 
           volumeMounts:
             - mountPath: /var/lib/grafana
