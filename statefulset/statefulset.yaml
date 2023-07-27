@@ -16,6 +16,7 @@ spec:
       labels:
         app.kubernetes.io/name: monitoring-statefulset
     spec:
+      serviceAccountName: onboarding-api
       containers:
         - name: prometheus
           image: registry.ford.com/gcprelease/prometheus:0.0.1

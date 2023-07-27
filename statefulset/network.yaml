@@ -16,7 +16,7 @@ spec:
       targetPort: 9090
   selector:
     app.kubernetes.io/name: monitoring-statefulset
-    
+
 apiVersion: v1
 kind: Service
 metadata:
@@ -45,7 +45,7 @@ metadata:
     haproxy.router.openshift.io/rate-limit-connections: true
     haproxy.router.openshift.io/rate-limit-connections.rate-http: 50
 spec:
-  host: grafana-dev.app.ford.com
+  host: grafana-vault-dev.app.ford.com
   to:
     kind: Service
     name: grafana-service
