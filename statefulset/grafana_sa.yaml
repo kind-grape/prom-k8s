@@ -1,0 +1,72 @@
+# this is to create a SA and role binding for interaction with the cluster prometheus instance 
+# the token created would be the http bearer token for the grafana datasouce 
+# uncomment each block at a time to create the OC obj
+
+####################################
+# apiVersion: v1
+# kind: ServiceAccount
+# metadata:
+#   name: grafana-sa
+#   namespace: vaultdev-gcp
+# automountServiceAccountToken: false
+####################################
+
+
+##########################################
+# kind: Role
+# apiVersion: rbac.authorization.k8s.io/v1
+# metadata:
+#   name: grafana-role
+#   namespace: vaultdev-gcp
+# rules:
+#   - verbs:
+#       - get
+#     apiGroups:
+#       - ""
+#     resources:
+#       - pods
+##########################################
+
+
+
+##########################################
+# kind: RoleBinding
+# apiVersion: rbac.authorization.k8s.io/v1
+# metadata:
+#   name: grafana-rb
+#   namespace: vaultdev-gcp
+# subjects:
+#   - kind: ServiceAccount
+#     name: grafana-sa
+#     namespace: vaultdev-gcp
+# roleRef:
+#   apiGroup: rbac.authorization.k8s.io
+#   kind: Role
+#   name: grafana-role
+##########################################
+
+
+
+##########################################
+apiVersion: v1
+kind: Secret
+metadata:
+  name: grafana-sec
+  namespace: vaultdev-gcp
+  annotations:
+    kubernetes.io/service-account.name: grafana-sa
+type: kubernetes.io/service-account-token
+##########################################
+
+## to get the token value for grafana secret 
+# export SECRET="grafana-sec"
+# export NAMESPACE="vaultdev-gcp"
+# export CLUSTER="pd120"
+
+# export TOKEN=$(echo $(oc get secret $SECRET -n $NAMESPACE -o json | jq -r '.data.token') | base64 -d)
+# export THANOS_QUERIER_HOST=$(echo "thanos-querier-tenancy-openshift-monitoring.apps.$CLUSTER.caas.gcp.ford.com")
+
+## curl call to test secret 
+# curl -X GET -k  "https://$THANOS_QUERIER_HOST/api/v1/query?query=up&namespace=${NAMESPACE}" -H "Authorization: Bearer $TOKEN"
+
+# the curl commands arguments are now the fields requried to configure the datasource in grafana

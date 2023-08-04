@@ -59,16 +59,16 @@ spec:
             - name: GF_SERVER_CERT_KEY
               value: /etc/grafana/tls/key.pem
             - name: GF_AUTH_LDAP_ENABLED
-              value: true
+              value: "false"
             - name: GF_AUTH_LDAP_SKIP_ORG_ROLE_SYNC
-              value: true
+              value: "true"
 
 
           volumeMounts:
             - mountPath: /var/lib/grafana
               name: grafana-vol
             - mountPath: /etc/grafana/provisioning/datasources
-              name: grafana-datasources
+              name: grafana-datasources-secret
               readOnly: false
             - mountPath: /etc/grafana/provisioning/dashboards
               name: grafana-dashboard-conf
@@ -87,10 +87,10 @@ spec:
           configMap:
             defaultMode: 420
             name: prometheus-server-conf
-        - name: grafana-datasources
-          configMap:
+        - name: grafana-datasources-secret
+          secret:
               defaultMode: 420
-              name: grafana-datasources
+              secretName: grafana-datasources-secret
         - name: grafana-dashboard-conf
           configMap:
               defaultMode: 420
