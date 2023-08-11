@@ -59,9 +59,13 @@ spec:
             - name: GF_SERVER_CERT_KEY
               value: /etc/grafana/tls/key.pem
             - name: GF_AUTH_LDAP_ENABLED
-              value: "false"
-            - name: GF_AUTH_LDAP_SKIP_ORG_ROLE_SYNC
               value: "true"
+            - name: GF_AUTH_LDAP_CONFIG_FILE
+              value: "/etc/grafana/ldap/ldap.toml"
+            - name: GF_AUTH_LDAP_SKIP_ORG_ROLE_SYNC
+              value: "false"
+            - name: GF_LOG_LEVEL
+              value: "debug"
 
 
           volumeMounts:
@@ -78,6 +82,9 @@ spec:
               readOnly: false
             - mountPath: /etc/grafana/tls
               name: grafana-tls
+              readOnly: true
+            - mountPath: /etc/grafana/ldap
+              name: grafana-ldap
               readOnly: true
 
 
@@ -103,6 +110,10 @@ spec:
           secret:
               defaultMode: 420
               secretName: grafana-tls-test
+        - name: grafana-ldap
+          secret:
+              defaultMode: 420
+              secretName: grafana-ldap
         
         
 

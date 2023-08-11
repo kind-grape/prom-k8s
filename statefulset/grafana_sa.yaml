@@ -69,4 +69,4 @@ type: kubernetes.io/service-account-token
 ## curl call to test secret 
 # curl -X GET -k  "https://$THANOS_QUERIER_HOST/api/v1/query?query=up&namespace=${NAMESPACE}" -H "Authorization: Bearer $TOKEN"
 
-# the curl commands arguments are now the fields requried to configure the datasource in grafana
+# the curl commands arguments are now the fields requried to configure the datasource in grafana, seen in the datasource config map
