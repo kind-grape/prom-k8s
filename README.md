@@ -8,10 +8,15 @@ docker build .
 ```
 
 ### Create Auxilary Resources for Deployments/Statefulset 
+1. Update the correspnding values such as namespaces/SA in the yaml file so that it reflects the actual cluster info from the environment
+
+
 1. Create prometheus config map
    ```
    oc apply -f prom-conf-cm.yaml
    ```
+   ***note***  
+   going forward Vault telemetry config should be updated with `unauthenticated_access` as true, so that the Prometheus config no longer requires a Vault token to retrieve the telemtry data 
 
 1. Create grafana datasource conf config map or secret  
   ***note***
@@ -41,6 +46,11 @@ docker build .
    oc apply -f network.yaml
    ```
 
+
+1. Update the `grafana-ldap-conf-secret.toml` file with the actual ldap password and create the grafana ldap config secret
+  ```
+  oc apply -f grafana-ldap-conf-secret.toml
+  ```
 
 1. Create statefulset 
    ```
